@@ -32,7 +32,7 @@ def netProcMon():
                                 'PID', f"{process.ProcessId:<10}",
                                 'Command', f"{process.CommandLine}")
     
-    npmDF.to_csv("{}_netprocmon".format(audit_computername), encoding='utf-8', index=False)
+    npmDF.to_csv("{}-processes".format(audit_computername), encoding='utf-8', index=False)
 
 
 # Collect all service binaries and details about each
@@ -46,7 +46,7 @@ def serviceBinaries():
                                 'Path', f"{service.PathName}",
                                 'State', f"{service.State}")
 
-    sbDF.to_csv("{}_services".format(audit_computername), encoding='utf-8', index=False)
+    sbDF.to_csv("{}-services".format(audit_computername), encoding='utf-8', index=False)
 
 
 # Collect all nics and their configuration
@@ -85,7 +85,7 @@ def dnsCache():
                                 'Name', f"{name[i]}",
                                 'Resolve', f"{record[i]}")
 
-    dnsDF.to_csv("{}_dns".format(audit_computername), encoding='utf-8', index=False)
+    dnsDF.to_csv("{}_dnscache".format(audit_computername), encoding='utf-8', index=False)
 
 
 # Collect active TCP connections via Windows commandline, filtering out dead/loopback connections
