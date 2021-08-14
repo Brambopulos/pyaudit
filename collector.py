@@ -111,6 +111,8 @@ def netstat():
                                 'Remote IP', f"{remote[i]}",
                                 'State', f"{state[i]}",
                                 'PID', f"{pid[i]}")
+                                
+    connDF.to_csv("{}_netstat".format(audit_computername), encoding='utf-8', index=False)
 
 
 # Create a working directory, run the process, and 
