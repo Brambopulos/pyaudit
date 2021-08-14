@@ -111,7 +111,7 @@ def netstat():
                                 'Remote IP', f"{remote[i]}",
                                 'State', f"{state[i]}",
                                 'PID', f"{pid[i]}")
-                                
+
     connDF.to_csv("{}_netstat".format(audit_computername), encoding='utf-8', index=False)
 
 
@@ -124,6 +124,7 @@ def main():
     serviceBinaries()
     networkCards()
     dnsCache()
+    netstat()
     os.chdir(owd)
 
     zipped = zipfile.ZipFile('f{audit_computername}.zip', 'w', zipfile.ZIP_DEFLATED)
