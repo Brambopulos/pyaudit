@@ -28,8 +28,8 @@ def netProcMon():
     for process in windows.Win32_Process():
         npmDF = npmDF.append('Computername', audit_computername,
                                 'Audit_Date', audit_timestamp,
-                                'Process', f"{process.Name}"
-                                'PID', f"{process.ProcessId:<10}"
+                                'Process', f"{process.Name}",
+                                'PID', f"{process.ProcessId:<10}",
                                 'Command', f"{process.CommandLine}")
     
     npmDF.to_csv("{}_netprocmon".format(audit_computername), encoding='utf-8', index=False)
@@ -41,9 +41,9 @@ def serviceBinaries():
     for service in windows.Win32_Service():
         sbDF = sbDF.append('Computername', audit_computername,
                                 'Audit_Date', audit_timestamp,
-                                'Name', f"{service.DisplayName}"
-                                'Description', f"{service.Description}"
-                                'Path', f"{service.PathName}"
+                                'Name', f"{service.DisplayName}",
+                                'Description', f"{service.Description}",
+                                'Path', f"{service.PathName}",
                                 'State', f"{service.State}")
 
     sbDF.to_csv("{}_services".format(audit_computername), encoding='utf-8', index=False)
@@ -55,10 +55,10 @@ def networkCards():
     for conn in windows.Win32_NetworkAdapterConfiguration():
         nicDF = nicDF.append('Computername', audit_computername,
                                 'Audit_Date', audit_timestamp,
-                                'MAC', f"{conn.MACAddress}"
-                                'IP', f"{conn.IPAddress[0]}"
-                                'Subnet', f"{conn.IPSubnet[0]}"
-                                'DHCP', f"{conn.DHCPEnabled}"
+                                'MAC', f"{conn.MACAddress}",
+                                'IP', f"{conn.IPAddress[0]}",
+                                'Subnet', f"{conn.IPSubnet[0]}",
+                                'DHCP', f"{conn.DHCPEnabled}",
                                 'Service', f"{conn.ServiceName}")
 
     nicDF.to_csv("{}_nic".format(audit_computername), encoding='utf-8', index=False)
@@ -82,10 +82,35 @@ def dnsCache():
     for i in range[0, len(name) - 1]:
         dnsDF = dnsDF.append('Computername', audit_computername,
                                 'Audit_Date', audit_timestamp,
-                                'Name', f"{name[i]}"
+                                'Name', f"{name[i]}",
                                 'Resolve', f"{record[i]}")
 
     dnsDF.to_csv("{}_dns".format(audit_computername), encoding='utf-8', index=False)
+
+
+# Collect active TCP connections via Windows commandline, filtering out dead/loopback connections
+def netstat():
+    netstat = os.popen('netstat -ano')
+    local = []
+    remote = []
+    state = []
+    pid = []
+    for line in netstat.read():
+        if 'TCP' in line and '[::]' not in line:
+            divided = line.split()
+            local = divided[1]
+            remote = divided[2]
+            state = divided[3]
+            pid = divided[4]
+
+    connDF = pd.DataFrame(columns=['Computername', 'Audit_Date', 'Local IP', 'Remote IP', 'State',  'PID'])
+    for i in range[0, len(local) - 1]:
+        connDF = connDF.append('Computername', audit_computername,
+                                'Audit_Date', audit_timestamp,
+                                'Local IP', f"{local[i]}",
+                                'Remote IP', f"{remote[i]}",
+                                'State', f"{state[i]}",
+                                'PID', f"{pid[i]}")
 
 
 # Create a working directory, run the process, and 
